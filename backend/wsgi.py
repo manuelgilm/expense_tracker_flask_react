@@ -1,4 +1,5 @@
 from src.app import app 
+from src.ma import ma
 from src.db import db
 
 
@@ -8,4 +9,5 @@ def create_tables():
 
 if __name__ =="__main__":
     db.init_app(app)
+    ma.init_app(app)
     app.run(debug=True)

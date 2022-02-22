@@ -1,10 +1,17 @@
 import json
 from flask import Blueprint, request, jsonify
+from marshmallow import ValidationError
 from src.models.user import UserModel
+from src.schemas.user import UserSchema
+from src.ma import ma
+
 user = Blueprint(name="users", import_name=__name__)
 
 
 #---------------USER CRUD-----------------
+
+user_schema = UserSchema()
+
 @user.get("/")
 def get_users():
     users = UserModel.find_users()
@@ -14,9 +21,10 @@ def get_users():
 
 @user.post("/create")
 def create_user():
-    user_json = request.json
-    print(user_json)
-    user = UserModel(username=user_json["username"], password=user_json["password"])
+    try:
+        user = user_schema.load(request.json)
+    except ValidationError as err:
+        return err.messages, 400
     user.save_to_db()
     return jsonify({"response":"user created"})
 

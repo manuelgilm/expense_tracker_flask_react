@@ -9,10 +9,6 @@ class UserModel(db.Model):
     password = db.Column(db.String(80), nullable=False)
     categories = db.relationship('CategoryModel', lazy="dynamic")
 
-    def __init__(self, username:str, password:str)->None:
-        self.username = username
-        self.password = password
-
     @classmethod
     def find_by_username(cls, username:str)->"UserModel":
         return cls.query.filter_by(username=username).first()
