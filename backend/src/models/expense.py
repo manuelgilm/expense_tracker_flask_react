@@ -17,13 +17,6 @@ class ExpenseModel(db.Model):
     user = db.relationship("UserModel")
     category = db.relationship("CategoryModel")
 
-    def __init__(self, name:str, description:str, amount:float, category_id:int, user_id:int)->None:
-        self.name = name
-        self.description = description
-        self.amount = amount
-        self.category_id = category_id
-        self.user_id = user_id
-
     @classmethod
     def find_expense_by_id(cls,_id:int)->"ExpenseModel":
         return cls.query.filter_by(id=_id).first()

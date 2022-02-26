@@ -3,27 +3,28 @@ from types import BuiltinFunctionType
 from unicodedata import category
 from flask import Blueprint, jsonify, request
 from src.models.category import CategoryModel
+from src.schemas.category import CategorySchema
 
 cat = Blueprint(name="categoris", import_name = __name__)
+
+cat_schema = CategorySchema()
 
 # -------------CRUD categories------------------
 @cat.get("/")
 def get_categories():
     categories = CategoryModel.find_categories()
-    categories_list = [category.json() for category in categories]
-    return jsonify({"response":categories_list})
+    return jsonify(cat_schema.dump(categories, many = True))
 
 @cat.post("/create")
 def create_category():
-    category_json = request.json
-    category = CategoryModel(**category_json)
+    category = cat_schema.load(request.get_json())
     category.save_to_db()
     return {"response":"category has been created"}
 
 @cat.get("/<int:id>")
 def get_category(id):
     category = CategoryModel.find_category_by_id(id)
-    return jsonify({"response":category.json()})
+    return jsonify({"response":cat_schema.dump(category)})
 
 @cat.delete("/<int:id>")
 def delete_category(id):

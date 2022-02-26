@@ -8,6 +8,7 @@ class UserModel(db.Model):
     username = db.Column(db.String(80), nullable=False, unique = True)
     password = db.Column(db.String(80), nullable=False)
     categories = db.relationship('CategoryModel', lazy="dynamic")
+    expenses = db.relationship('ExpenseModel', lazy = "dynamic")
 
     @classmethod
     def find_by_username(cls, username:str)->"UserModel":

@@ -1,6 +1,6 @@
 from src.app import app 
-from src.ma import ma
 from src.db import db
+from src.ma import ma
 
 
 @app.before_first_request
