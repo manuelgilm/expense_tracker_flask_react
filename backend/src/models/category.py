@@ -19,6 +19,10 @@ class CategoryModel(db.Model):
     def find_categories(cls)->List:
         return cls.query.all()
 
+    @classmethod
+    def find_categories_by_owner(cls, user_id)->List:
+        return cls.query.filter(cls.user_id == user_id)
+
     def save_to_db(self)->None:
         db.session.add(self)
         db.session.commit()

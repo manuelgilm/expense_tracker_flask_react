@@ -10,7 +10,7 @@ class ExpenseModel(db.Model):
     description = db.Column(db.String(60))
     amount = db.Column(db.Float(precision=2),nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
+    
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
 
@@ -22,6 +22,10 @@ class ExpenseModel(db.Model):
     @classmethod
     def find_expenses_by_name(cls,name:str)->List:
         return cls.query.filter_by(name=name).all()
+
+    @classmethod
+    def find_expenses_by_owner(cls, user_id:int)->List:
+        return cls.query.filter(cls.user_id == user_id)
 
     @classmethod
     def find_expenses(cls)->List:

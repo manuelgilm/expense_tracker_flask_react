@@ -17,7 +17,6 @@ from flask_jwt_extended import (
 )
 
 user = Blueprint(name="users", import_name=__name__)
-
 #---------------USER CRUD-----------------
 
 user_schema = UserSchema()
@@ -27,11 +26,6 @@ user_schema = UserSchema()
 def get_users():
     users = UserModel.find_users()
     users = user_schema.dump(users, many=True)
-    
-    
-    # users_dict = [user.json() for user in users]
-    # print(users_dict)
-    # return jsonify({"response":users_dict})
     return jsonify(users)
 
 @user.post("/create")

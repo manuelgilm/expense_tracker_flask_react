@@ -7,4 +7,4 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
         dump_only = ("id",)
-        fields = ("name","description","amount","user_id","category_id")
+        fields = ("name","description","amount","category_id","user_id")
