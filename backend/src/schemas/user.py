@@ -13,5 +13,4 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         dump_only = ("id",)
         load_instance = True
         include_fk = True
-        
-        fields = ("username", "categories","expenses")
+        fields = ("username","password","categories","expenses")

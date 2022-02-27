@@ -1,4 +1,5 @@
 import json
+from src.db import db
 from types import BuiltinFunctionType
 from unicodedata import category
 from flask import Blueprint, jsonify, request
@@ -17,7 +18,8 @@ def get_categories():
 
 @cat.post("/create")
 def create_category():
-    category = cat_schema.load(request.get_json())
+    category = cat_schema.load(request.get_json(), session=db.session)
+        
     category.save_to_db()
     return {"response":"category has been created"}
 

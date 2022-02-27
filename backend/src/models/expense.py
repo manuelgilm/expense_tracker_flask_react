@@ -11,11 +11,9 @@ class ExpenseModel(db.Model):
     amount = db.Column(db.Float(precision=2),nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
 
-    user = db.relationship("UserModel")
-    category = db.relationship("CategoryModel")
 
     @classmethod
     def find_expense_by_id(cls,_id:int)->"ExpenseModel":

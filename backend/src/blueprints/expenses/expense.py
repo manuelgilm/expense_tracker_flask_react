@@ -1,8 +1,10 @@
 import json
+from src.db import db
 from shutil import ExecError
 from flask import Blueprint, jsonify, request
 from src.models.expense import ExpenseModel
 from src.schemas.expense import ExpenseSchema
+from src.models.category import CategoryModel
 
 exp = Blueprint(name="expenses", import_name = __name__)
 

@@ -9,9 +9,7 @@ class CategoryModel(db.Model):
     description = db.Column(db.String(100))
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    user = db.relationship("UserModel", lazy ="dynamic")
-
-    expenses = db.relationship("ExpenseModel", lazy ="dynamic")
+    expenses = db.relationship("ExpenseModel",lazy="dynamic")
 
     @classmethod
     def find_category_by_id(cls, _id:int)-> "CategoryModel":
