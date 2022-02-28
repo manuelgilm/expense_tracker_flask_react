@@ -28,6 +28,10 @@ class ExpenseModel(db.Model):
         return cls.query.filter(cls.user_id == user_id)
 
     @classmethod
+    def find_expenses_by_category(cls, user_id:int, category_id:int):
+        return cls.query.filter(cls.user_id == user_id and cls.category_id == category_id)
+
+    @classmethod
     def find_expenses(cls)->List:
         return cls.query.all()
 

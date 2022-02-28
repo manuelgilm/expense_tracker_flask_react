@@ -1,4 +1,6 @@
 import json
+
+from click import get_current_context
 from src.db import db
 from flask import Blueprint, jsonify, request
 from src.models.expense import ExpenseModel
@@ -21,8 +23,12 @@ def get_expenses():
 @exp.get("/<int:id>")
 @jwt_required()
 def get_expense(id):
+    expenses = ExpenseModel.find_expenses_by_owner(get_jwt_identity())
     expense = ExpenseModel.find_expense_by_id(id)
-    return jsonify({"response":expense_schema.dump(expense)})
+
+    if expense in expenses:
+        return jsonify({"response":expense_schema.dump(expense)})
+    return jsonify({"response":"Expense not found!"})
 
 @exp.post("/create")
 @jwt_required()
@@ -31,12 +37,11 @@ def create_expense():
     current_user_id = get_jwt_identity()
     user_categories = CategoryModel.find_categories_by_owner(current_user_id)
 
-    if data["name"] in [category.name for category in user_categories]:
+    if data["category_id"] in [category.id for category in user_categories]:
         data.update({"user_id":get_jwt_identity()})
         expense = expense_schema.load(data)
         expense.save_to_db()
         return jsonify({"response":"expense has been created"})
-
     return jsonify({"response":"Category not Found"}), 404
 
 
@@ -44,5 +49,22 @@ def create_expense():
 @jwt_required()
 def delete_expense(id):
     expense = ExpenseModel.find_expense_by_id(id)
-    expense.delete_from_db()
-    return jsonify({"response":"expense has been deleted"})
+    expenses = ExpenseModel.find_expenses_by_owner(user_id=get_jwt_identity())
+    if expense in expenses:
+        expense.delete_from_db()
+        return jsonify({"response":"expense has been deleted"})
+    return jsonify({"response":"expense not found!"})
+
+@exp.get("/total")
+@jwt_required()
+def total():
+    expenses = ExpenseModel.find_expenses_by_owner(user_id=get_jwt_identity())
+    total = sum([expense.amount for expense in expenses])
+    return jsonify({"response":total})
+
+@exp.get("/total/<int:category_id>")
+@jwt_required()
+def total_by_category(category_id):
+    expenses_category = ExpenseModel.find_expenses_by_category(user_id=get_jwt_identity(), category_id=category_id)
+    total = sum([expense.amount for expense in expenses_category])
+    return jsonify({"response":total})
