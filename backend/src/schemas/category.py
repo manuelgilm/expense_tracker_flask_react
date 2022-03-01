@@ -8,5 +8,6 @@ class CategorySchema(ma.SQLAlchemyAutoSchema):
         model = CategoryModel
         load_instance = True
         dump_only = ("id",)
+        load_only = ("user_id",)
         include_fk = True
         fields = ("name","description","user_id","expenses")

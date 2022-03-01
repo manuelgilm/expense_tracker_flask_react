@@ -31,11 +31,12 @@ def get_expense(id):
 @jwt_required()
 def create_expense():
     data = request.get_json()
+    category_name = data.pop("category_name", None)
     current_user_id = get_jwt_identity()
-    user_categories = CategoryModel.find_categories_by_owner(current_user_id)
+    category = CategoryModel.find_category_by_name_and_owner(category_name=category_name, user_id=current_user_id)
 
-    if data["category_id"] in [category.id for category in user_categories]:
-        data.update({"user_id":get_jwt_identity()})
+    if category:
+        data.update({"user_id":current_user_id,"category_id":category.id})
         expense = expense_schema.load(data)
         expense.save_to_db()
         return jsonify({"response":"expense has been created"})

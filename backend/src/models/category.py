@@ -1,5 +1,6 @@
 from src.db import db
 from typing import List, Dict
+from sqlalchemy import and_, func
 
 class CategoryModel(db.Model):
     __tablename__ = "categories"
@@ -20,8 +21,12 @@ class CategoryModel(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find_categories_by_owner(cls, user_id)->List:
+    def find_categories_by_owner(cls, user_id:int)->List:
         return cls.query.filter(cls.user_id == user_id)
+
+    @classmethod
+    def find_category_by_name_and_owner(cls, category_name:str, user_id:int)->"CategoryModel":
+        return cls.query.filter(and_(cls.user_id==user_id, cls.name==category_name)).first()
 
     def save_to_db(self)->None:
         db.session.add(self)
