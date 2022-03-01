@@ -1,5 +1,6 @@
 from src.db import db
 from typing import List, Dict
+from sqlalchemy import and_, func
 import datetime 
 
 class ExpenseModel(db.Model):
@@ -28,8 +29,16 @@ class ExpenseModel(db.Model):
         return cls.query.filter(cls.user_id == user_id)
 
     @classmethod
-    def find_expenses_by_category(cls, user_id:int, category_id:int):
-        return cls.query.filter(cls.user_id == user_id and cls.category_id == category_id)
+    def find_expense_by_id_and_owner(cls, expense_id:int, user_id:int)->"ExpenseModel":
+        return cls.query.filter(and_(cls.user_id == user_id , cls.id == expense_id)).first()
+
+    @classmethod
+    def total_expenses_by_category(cls, user_id:int, category_id:int):
+        return cls.query.with_entities(func.sum(cls.amount)).filter(and_(cls.user_id == user_id, cls.category_id == category_id)).first()
+
+    @classmethod
+    def total_expenses_by_user_id(cls, user_id:int):
+        return cls.query.with_entities(func.sum(cls.amount)).filter(cls.user_id == user_id).first()
 
     @classmethod
     def find_expenses(cls)->List:
