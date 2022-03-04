@@ -4,6 +4,7 @@ import json
 from src.db import db
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
+from src.common import check_password, generate_hash
 from src import responses
 from src.models.user import UserModel
 from src.schemas.user import UserSchema
@@ -35,6 +36,7 @@ def get_users():
 def create_user():
     try:
         user = user_schema.load(request.get_json(),session=db.session)
+        user.password = generate_hash(user_obj=user)
     except ValidationError as err:
         return err.messages, responses.HTTP_400_BAD_REQUEST
 
@@ -53,13 +55,25 @@ def delete_user(id):
     user = UserModel.find_by_id(id)
     user.delete_from_db()
     return jsonify(response= responses.DELETED.format("User")) , responses.HTTP_204_NO_CONTENT
+    
+@user.post("/register")
+def register():
+    user_obj = user_schema.load(request.get_json())
+    user = UserModel.find_by_username(user_obj.username)
+    if user:
+        return jsonify(response = responses.ELEMENT_ALREADY_EXISTS.format(user_obj.username)), responses.HTTP_406_NOT_ACCEPTABLE
+
+    user_obj.password = generate_hash(user_obj=user_obj)
+    print(user_obj.password)
+    user_obj.save_to_db()
+    return jsonify(response = responses.ELEMENT_CREATED.format("User")), responses.HTTP_201_CREATED
 
 @user.post("/login")
 def login():
     user_obj = user_schema.load(request.get_json())
     user = UserModel.find_by_username(user_obj.username)
     if user:
-        if safe_str_cmp(user.password, user_obj.password):
+        if check_password(user, user_obj):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return jsonify(access_token = access_token, refresh_token = refresh_token), responses.HTTP_200_OK

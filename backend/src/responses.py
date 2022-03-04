@@ -19,6 +19,7 @@ HTTP_204_NO_CONTENT = 204
 HTTP_205_RESET_CONTENT = 205
 
 #MESSAGES
+ELEMENT_ALREADY_EXISTS = "{} already exists!"
 ELEMENT_NOT_FOUND = "{} not found!"
 ELEMENT_CREATED = "{} created!"
 INVALID_CREDENTIALS = "Invalid credentials"
