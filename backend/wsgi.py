@@ -1,9 +1,10 @@
-from src.app import app 
+from src.app import create_app
 from src.db import db
 from src.ma import ma
 from src.blocklist import BLOCKLIST
 from flask_jwt_extended import JWTManager
 
+app = create_app()
 
 @app.before_first_request
 def create_tables():

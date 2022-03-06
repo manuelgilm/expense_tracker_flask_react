@@ -11,12 +11,14 @@ from src.blueprints.user import user
 from src.blueprints.category import cat
 from src.blueprints.expense import exp
 
+def create_app(config_filename:str=None):
+    app = Flask(__name__)
+    CORS(app)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+    app.config['JWT_SECRET_KEY'] = "My secret"
 
-app = Flask(__name__)
-CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-app.config['JWT_SECRET_KEY'] = "My secret"
+    app.register_blueprint(user, url_prefix ="/user/")
+    app.register_blueprint(cat, url_prefix = "/category/")
+    app.register_blueprint(exp, url_prefix = "/expense/")
 
-app.register_blueprint(user, url_prefix ="/user/")
-app.register_blueprint(cat, url_prefix = "/category/")
-app.register_blueprint(exp, url_prefix = "/expense/")
+    return app
