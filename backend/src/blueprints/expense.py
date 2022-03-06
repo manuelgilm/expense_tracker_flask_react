@@ -86,4 +86,9 @@ def total_by_category(category_name):
     category = CategoryModel.find_category_by_name_and_owner(category_name, user_id)
     if category:
         expenses = ExpenseModel.total_expenses_by_category(user_id=user_id, category_id=category.id)
-    return jsonify(response = expenses[0])
+        return jsonify(response = expenses[0]), responses.HTTP_200_OK
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format(category_name)), responses.HTTP_404_NOT_FOUND
+
+# List expenses by date.
+
+# Total expenses by date.

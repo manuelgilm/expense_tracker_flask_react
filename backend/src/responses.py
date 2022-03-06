@@ -22,6 +22,7 @@ HTTP_205_RESET_CONTENT = 205
 ELEMENT_ALREADY_EXISTS = "{} already exists!"
 ELEMENT_NOT_FOUND = "{} not found!"
 ELEMENT_CREATED = "{} created!"
+ELEMENT_UPDATED = "{} Updated!"
 INVALID_CREDENTIALS = "Invalid credentials"
 LOGOUT = "Successful logout"
 DELETED = "{} successfully deleted"

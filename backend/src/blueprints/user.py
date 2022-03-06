@@ -31,7 +31,7 @@ def get_users():
     return jsonify(users), responses.HTTP_200_OK
 
 @user.post("/create")
-# @jwt_required()
+@jwt_required()
 def create_user():
     try:
         user = user_schema.load(request.get_json(),session=db.session)
@@ -46,24 +46,28 @@ def create_user():
 @jwt_required()
 def get_user_by_id(id):
     user = UserModel.find_by_id(id)
-    return user.dump()
+    if user:
+        return jsonify(response=user_schema.dump()), responses.HTTP_200_OK
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format("User")), responses.HTTP_400_BAD_REQUEST
 
 @user.delete("/<int:id>")
 @jwt_required()
 def delete_user(id):
     user = UserModel.find_by_id(id)
-    user.delete_from_db()
-    return jsonify(response= responses.DELETED.format("User")) , responses.HTTP_204_NO_CONTENT
+    if user:
+        user.delete_from_db()
+        return jsonify(response= responses.DELETED.format("User")) , responses.HTTP_204_NO_CONTENT
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format("User")), responses.HTTP_400_BAD_REQUEST
+        
     
 @user.post("/register")
 def register():
     user_obj = user_schema.load(request.get_json())
     user = UserModel.find_by_username(user_obj.username)
     if user:
-        return jsonify(response = responses.ELEMENT_ALREADY_EXISTS.format(user_obj.username)), responses.HTTP_406_NOT_ACCEPTABLE
+        return jsonify(response = responses.ELEMENT_ALREADY_EXISTS.format(user_obj.username)), responses.HTTP_400_BAD_REQUEST
 
     user_obj.password = generate_password_hash(user_obj.password)
-    print(user_obj.password)
     user_obj.save_to_db()
     return jsonify(response = responses.ELEMENT_CREATED.format("User")), responses.HTTP_201_CREATED
 
@@ -88,6 +92,7 @@ def post():
     BLOCKLIST.add(jti)
     return jsonify(response = responses.LOGOUT), responses.HTTP_200_OK
 
+#add endpoint to update users
 
 
     
