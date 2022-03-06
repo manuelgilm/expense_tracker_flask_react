@@ -6,7 +6,7 @@ class CategoryModel(db.Model):
     __tablename__ = "categories"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(60), nullable=False, unique=True)
+    name = db.Column(db.String(60), nullable=False)
     description = db.Column(db.String(100))
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))

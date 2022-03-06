@@ -44,6 +44,14 @@ class ExpenseModel(db.Model):
     def find_expenses(cls)->List:
         return cls.query.all()
 
+    @classmethod
+    def find_expenses_by_category(cls, user_id:int, category_id:int)->List:
+        return cls.query.filter(and_(cls.user_id == user_id, cls.category_id == category_id)).all()
+
+    @classmethod
+    def find_expenses_by_user_id(cls, user_id:int)->"ExpenseModel":
+        return cls.query.filter(cls.user_id == user_id).all()
+
     def save_to_db(self)->None:
         db.session.add(self)
         db.session.commit()

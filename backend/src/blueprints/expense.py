@@ -55,14 +55,35 @@ def delete_expense(id):
         return jsonify(response = responses.DELETED.format("Expense")), responses.HTTP_204_NO_CONTENT
     return jsonify(response = responses.ELEMENT_NOT_FOUND.format("Expense")), responses.HTTP_404_NOT_FOUND
 
+## LIST OPERATIONS
+@exp.get("/list")
+@jwt_required()
+def get_expenses_by_user_id():
+    expenses = ExpenseModel.find_expenses_by_user_id(user_id = get_jwt_identity())
+    return jsonify(response = expense_schema.dump(expenses, many = True)), responses.HTTP_200_OK
+
+@exp.get("/list/<string:category_name>")
+@jwt_required()
+def get_expenses_by_category(category_name:str):
+    user_id = get_jwt_identity()
+    category = CategoryModel.find_category_by_name_and_owner(category_name, user_id)
+    if category:
+        expenses = ExpenseModel.find_expenses_by_category(user_id, category.id)
+        return jsonify(response = expense_schema.dump(expenses, many = True)), responses.HTTP_200_OK
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format("category_name")), responses.HTTP_404_NOT_FOUND
+
+## SUM OPERATIONS
 @exp.get("/total")
 @jwt_required()
 def total():
     expenses = ExpenseModel.total_expenses_by_user_id(user_id=get_jwt_identity())
     return jsonify(response = expenses[0]), responses.HTTP_200_OK
 
-@exp.get("/total/<int:category_id>")
+@exp.get("/total/<string:category_name>")
 @jwt_required()
-def total_by_category(category_id):
-    expenses_category = ExpenseModel.total_expenses_by_category(user_id=get_jwt_identity(), category_id=category_id)
-    return jsonify(response = expenses_category[0])
+def total_by_category(category_name):
+    user_id = get_jwt_identity()
+    category = CategoryModel.find_category_by_name_and_owner(category_name, user_id)
+    if category:
+        expenses = ExpenseModel.total_expenses_by_category(user_id=user_id, category_id=category.id)
+    return jsonify(response = expenses[0])

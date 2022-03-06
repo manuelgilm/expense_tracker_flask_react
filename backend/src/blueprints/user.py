@@ -9,7 +9,6 @@ from src.models.user import UserModel
 from src.schemas.user import UserSchema
 from src.ma import ma
 from src.blocklist import BLOCKLIST
-from werkzeug.security import safe_str_cmp
 from werkzeug.security import safe_str_cmp, generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     create_access_token,
