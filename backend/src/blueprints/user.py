@@ -23,6 +23,10 @@ user = Blueprint(name="users", import_name=__name__)
 
 user_schema = UserSchema()
 
+@user.get("/init")
+def init_endpoint():
+    return jsonify(response = "OK"), responses.HTTP_200_OK
+
 @user.get("/")
 @jwt_required()
 def get_users():
@@ -73,6 +77,8 @@ def register():
 
 @user.post("/login")
 def login():
+    print("*"*100)
+    print(request.get_json())
     user_obj = user_schema.load(request.get_json())
     user = UserModel.find_by_username(user_obj.username)
     if user:

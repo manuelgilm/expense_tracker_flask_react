@@ -1,17 +1,23 @@
+import json
 import pytest
 from src.app import create_app
 from src.db import db
 from src.models.user import UserModel
+from src.schemas.user import UserSchema
+from werkzeug.security import generate_password_hash
+
+
+user_schema = UserSchema
 
 
 @pytest.fixture(scope="module")
 def new_user():
-    user = UserModel("manuelito", "password")
+    user = UserModel(username = "Username", password = "password")
     return user
 
 @pytest.fixture(scope="module")
 def test_client():
-    flask_app = create_app("flask_test.cfg")
+    flask_app , _ = create_app("flask_test.cfg")
 
     # Create a test client using the Flask application configured for testing
     with flask_app.test_client() as testing_client:
@@ -26,8 +32,8 @@ def init_database(test_client):
     db.create_all()
 
     # Insert user data
-    user1 = UserModel(username = "manuelito", password_plaintext="password")
-    user2 = UserModel(username = "manuelito2", password_plaintext="password")
+    user1 = UserModel(username = "manuelito", password = generate_password_hash("password1"))
+    user2 = UserModel(username = "manuelito2", password = generate_password_hash("password2"))
     db.session.add(user1)
     db.session.add(user2)
 
@@ -42,8 +48,9 @@ def init_database(test_client):
 @pytest.fixture(scope="function")
 def login_default_user(test_client):
     test_client.post("/user/login",
-                     data=dict(username="manuelito", password="password"),
-                     follow_redirects=True)
+                     data = json.dumps(dict(username="manuelito", password=generate_password_hash("password1"))),
+                     content_type='application/json')
+
 
     yield  # this is where the testing happens!
 
