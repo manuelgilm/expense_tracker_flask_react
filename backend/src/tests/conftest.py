@@ -45,7 +45,7 @@ def init_database(test_client):
     db.drop_all()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def login_default_user(test_client):
     test_client.post("/user/login",
                      data = json.dumps(dict(username="manuelito", password=generate_password_hash("password1"))),

@@ -25,13 +25,14 @@ def get_categories():
 def create_category():
     data = request.get_json()
     data.update({"user_id":get_jwt_identity()})
+    print(data)
     category = cat_schema.load(data, session=db.session)
     category_prev = CategoryModel.find_category_by_name_and_owner(category_name=category.name, user_id=get_jwt_identity())
     if category_prev:
         return jsonify(response = responses.ELEMENT_ALREADY_EXISTS.format(category.name)), responses.HTTP_400_BAD_REQUEST
 
     category.save_to_db()
-    return jsonify(response = responses.HTTP_201_CREATED), responses.HTTP_201_CREATED
+    return jsonify(response = responses.ELEMENT_CREATED.format(category.name)), responses.HTTP_201_CREATED
 
 @cat.get("/category/<string:category_name>")
 @jwt_required
