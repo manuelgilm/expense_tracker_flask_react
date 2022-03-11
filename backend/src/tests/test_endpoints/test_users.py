@@ -20,7 +20,7 @@ def test_valid_login_logout(test_client, init_database):
     THEN check the response is valid
     '''
     response = test_client.post('/user/login', 
-                                data = json.dumps({"username":"manuelito", "password":"password1"}),
+                                data = json.dumps({"username":"user", "password":"password1"}),
                                 content_type='application/json')
     assert response.status_code == 200
 

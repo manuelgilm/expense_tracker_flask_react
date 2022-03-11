@@ -18,7 +18,7 @@ cat_schema = CategorySchema()
 def get_categories():
     current_user_id = get_jwt_identity()
     categories = CategoryModel.find_categories_by_owner(current_user_id)
-    return jsonify(cat_schema.dump(categories, many = True))
+    return jsonify(response = cat_schema.dump(categories, many = True)), responses.HTTP_200_OK
 
 @cat.post("/create")
 @jwt_required()

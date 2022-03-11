@@ -22,7 +22,7 @@ class CategoryModel(db.Model):
 
     @classmethod
     def find_categories_by_owner(cls, user_id:int)->List:
-        return cls.query.filter(cls.user_id == user_id)
+        return cls.query.filter(cls.user_id == user_id).all()
 
     @classmethod
     def find_category_by_name_and_owner(cls, category_name:str, user_id:int)->"CategoryModel":
