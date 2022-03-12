@@ -1,8 +1,4 @@
-from http.client import ResponseNotReady
-import json
-
-from click import get_current_context
-from src.db import db
+import datetime
 from flask import Blueprint, jsonify, request
 from src import responses
 from src.models.expense import ExpenseModel
@@ -84,5 +80,24 @@ def total_by_category(category_name):
     return jsonify(response = responses.ELEMENT_NOT_FOUND.format(category_name)), responses.HTTP_404_NOT_FOUND
 
 # List expenses by date.
+@exp.get("/list_by_date")
+@jwt_required()
+def list_by_date():
+    data = request.get_json()
+    date = datetime.datetime(year=data["year"],month=data["month"],day=data["day"])
+    expenses = ExpenseModel.find_expeneses_by_date(user_id = get_jwt_identity(), date = date)
+    if expenses:
+        return jsonify(response=expense_schema.dump(expenses, many=True)), responses.HTTP_200_OK
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format("Expenses")), responses.HTTP_200_OK
 
-# Total expenses by date.
+@exp.get("/list_between_dates")
+@jwt_required()
+def list_between_dates():
+    data = request.get_json()
+    date1 = datetime.datetime(year=data["date1"]["year"],month=data["date1"]["month"],day=data["date1"]["day"])
+    date2 = datetime.datetime(year=data["date2"]["year"],month=data["date2"]["month"],day=data["date2"]["day"])
+
+    expenses = ExpenseModel.find_expenses_between_two_dates(user_id=get_jwt_identity(), date1=date1, date2 = date2)
+    if expenses:
+        return jsonify(response=expense_schema.dump(expenses, many=True)), responses.HTTP_200_OK
+    return jsonify(response = responses.ELEMENT_NOT_FOUND.format("Expenses")), responses.HTTP_200_OK

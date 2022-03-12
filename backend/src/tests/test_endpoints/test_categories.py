@@ -73,7 +73,6 @@ def test_get_list_categories_by_owner(test_client, init_database):
         - that the categories returned are the categories that belong to the user
         - that the data type of the response corresponds to list
     '''
-
    #login user
     response = test_client.post('/user/login',
                                 data = json.dumps({'username':'user','password':'password1'}),

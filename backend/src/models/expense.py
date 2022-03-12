@@ -48,6 +48,17 @@ class ExpenseModel(db.Model):
     def find_expenses_by_category(cls, user_id:int, category_id:int)->List:
         return cls.query.filter(and_(cls.user_id == user_id, cls.category_id == category_id)).all()
 
+    @classmethod
+    def find_expeneses_by_date(cls, user_id:int, date:str)->List["ExpenseModel"]:
+        date_end = datetime.datetime(year=date.year, month=date.month, day = date.day, hour=23, minute=59,second=59)
+        return cls.query.filter(and_(cls.user_id == user_id, cls.date >= date, cls.date <= date_end)).all()
+
+    @classmethod
+    def find_expenses_between_two_dates(cls, user_id:int, date1:str, date2:str)->List["ExpenseModel"]:
+        date1_end = datetime.datetime(year=date1.year, month=date1.month, day = date1.day, hour=23, minute=59,second=59)
+        date2_end = datetime.datetime(year=date2.year, month=date2.month, day = date2.day, hour=23, minute=59,second=59)
+        return cls.query.filter(and_(cls.user_id == user_id, cls.date >= date1,  cls.date <= date2,)).all()
+
     def save_to_db(self)->None:
         db.session.add(self)
         db.session.commit()
