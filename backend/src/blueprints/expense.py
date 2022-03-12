@@ -20,7 +20,7 @@ expense_schema = ExpenseSchema()
 def get_expense(id):
     expense = ExpenseModel.find_expense_by_id_and_owner(expense_id=id, user_id=get_jwt_identity())
     if expense:
-        return jsonify(expense_schema.dump(expense)), responses.HTTP_200_OK
+        return jsonify(response = expense_schema.dump(expense)), responses.HTTP_200_OK
     return jsonify(response = responses.ELEMENT_NOT_FOUND.format("Expense")), responses.HTTP_404_NOT_FOUND
 
 @exp.post("/create")
