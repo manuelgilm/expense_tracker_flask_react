@@ -56,6 +56,9 @@ def test_get_category_by_id(test_client, init_database):
     assert len(response.json['response']['expenses']) == 2
 
 def test_get_list_categories_by_owner(test_client, init_database):
+    '''
+    DOC
+    '''
 
    #login user
     response = test_client.post('/user/login',
@@ -78,4 +81,24 @@ def test_get_list_categories_by_owner(test_client, init_database):
 
     assert response.status_code == 200
     assert user_categories == categories_in_request
-    assert type(response.json['response']) == list   
+    assert type(response.json['response']) == list
+
+def test_delete_category(test_client, init_database):
+    '''
+    DOC
+    '''
+    #login user
+    response = test_client.post('/user/login',
+                                data = json.dumps({'username':'user','password':'password1'}),
+                                content_type = 'application/json')
+
+    assert response.status_code == 200
+
+    access_token = response.json["access_token"]
+    headers = {'Authorization': 'Bearer {}'.format(access_token)}
+
+    #categories request
+    response = test_client.delete('/category/1',
+                                headers = headers,
+                                content_type = 'application/json')
+    assert response.status_code == 204

@@ -26,7 +26,7 @@ class ExpenseModel(db.Model):
 
     @classmethod
     def find_expenses_by_owner(cls, user_id:int)->List:
-        return cls.query.filter(cls.user_id == user_id)
+        return cls.query.filter(cls.user_id == user_id).all()
 
     @classmethod
     def find_expense_by_id_and_owner(cls, expense_id:int, user_id:int)->"ExpenseModel":
@@ -47,10 +47,6 @@ class ExpenseModel(db.Model):
     @classmethod
     def find_expenses_by_category(cls, user_id:int, category_id:int)->List:
         return cls.query.filter(and_(cls.user_id == user_id, cls.category_id == category_id)).all()
-
-    @classmethod
-    def find_expenses_by_user_id(cls, user_id:int)->"ExpenseModel":
-        return cls.query.filter(cls.user_id == user_id).all()
 
     def save_to_db(self)->None:
         db.session.add(self)

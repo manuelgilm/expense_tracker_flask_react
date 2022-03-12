@@ -15,12 +15,6 @@ exp = Blueprint(name="expenses", import_name = __name__)
 
 expense_schema = ExpenseSchema()
 #-------------------------CRUD------------------
-@exp.get("/")
-@jwt_required()
-def get_expenses():
-    expenses = ExpenseModel.find_expenses_by_owner(get_jwt_identity())
-    return jsonify(expense_schema.dump(expenses, many = True)), responses.HTTP_200_OK
-
 @exp.get("/<int:id>")
 @jwt_required()
 def get_expense(id):
@@ -59,7 +53,7 @@ def delete_expense(id):
 @exp.get("/list")
 @jwt_required()
 def get_expenses_by_user_id():
-    expenses = ExpenseModel.find_expenses_by_user_id(user_id = get_jwt_identity())
+    expenses = ExpenseModel.find_expenses_by_owner(user_id = get_jwt_identity())
     return jsonify(response = expense_schema.dump(expenses, many = True)), responses.HTTP_200_OK
 
 @exp.get("/list/<string:category_name>")
